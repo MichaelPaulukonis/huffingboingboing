@@ -133,36 +133,10 @@ var getNNarray = function(headline) {
 
 };
 
-// simple strategy - replace all the nouns in one sentence with the nouns from another
-// It's something.
-var strategy1 = function(h1, h2) {
-
-    var sent = h1;
-
-    var nn1 = getNNarray(h1);
-    var nn2 = getNNarray(h2);
-    var nouns1 = nn1;
-    var nouns2 = nn2;
-
-    // if (nn1.length > nn2.length) {
-    // 	sent = h2;
-    // 	nouns1 = nn2;
-    // 	nouns2 = nn1;
-    // }
-
-    var limit = ( nn1.length < nn2.length ? nn1.length : nn2.length);
-
-    for (var i = 0; i < limit; i++) {
-	sent = sent.replace(nouns1[i], nouns2[i]);
-    }
-
-    return sent;
-
-};
 
 // simple strategy - replace all the nouns in one sentence with the nouns from another
 // It's something.
-var strategy2 = function(h1, h2) {
+var nounreplacement = function(h1, h2) {
 
     var sent = h1;
 
@@ -176,11 +150,52 @@ var strategy2 = function(h1, h2) {
     // the shortest list needs to be modded against its length
     for (var i = 0; i < longest; i++) {
 	sent = sent.replace(nouns1[i % nouns1.length] , nouns2[i % nouns2.length]);
+	// console.log(nouns1[i % nouns1.length]);
+	// console.log(nouns2[i % nouns1.length]);
+	sent = sent.replace(new RegExp(nouns1[i % nouns1.length], 'gi'), nouns2[i % nouns2.length]);
     }
 
     return sent;
 
 };
+
+// simple strategy - replace all the nouns in one sentence with the nouns from another
+// It's something.
+// trouble with some invert calcs:
+// (when the two arrays are the same length?)
+//
+// h1: 'Interstellar' VFX give new insights into black holes
+// h2:Which crowdfunded privacy routers are worthy of your trust?
+// i: 0 invert: 1 n2.length: 2
+// i: 1 invert: 0 n2.length: 2
+//
+// i: 2 invert: -1 n2.length: 2
+//
+// reversenoun: trust? give new privacy routers into black undefined
+// noun normal: privacy routers give new trust? into black privacy routers
+var replacementnoun = function(h1, h2) {
+
+    var sent = h1;
+
+    var nn1 = getNNarray(h1);
+    var nn2 = getNNarray(h2);
+    var nouns1 = nn1;
+    var nouns2 = nn2;
+
+    var longest = ( nn1.length > nn2.length ? nn1.length : nn2.length);
+
+    // the shortest list needs to be modded against its length
+    for (var i = 0; i < longest; i++) {
+	var invert = (nouns2.length - 1 - i) % nouns2.length;
+	console.log('i: ' + i + ' invert: ' + invert + ' n2.length: ' + nouns2.length);
+	sent = sent.replace(new RegExp(nouns1[i % nouns1.length], 'gi'), nouns2[invert]);
+	// sent = sent.replace(nouns1[i % nouns1.length] , nouns2[invert]);
+    }
+
+    return sent;
+
+};
+
 
 
 // This won't work for BoingBoing, since there are no "Categories" where the category is in the headline
@@ -207,10 +222,10 @@ function tweet() {
 
 	console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
 
-	var strategy = strategy2;
+	var strategy = nounreplacement;
 
-	console.log("replaced: " + strategy(h1.name, h2.name));
-
+	console.log("reversenoun: " + replacementnoun(h1.name, h2.name));
+	console.log("noun normal: " + nounreplacement(h1.name, h2.name));
 
 	// so. this doesn't work. we will have to split apart using some other means.
 	// OR - only use those sentences that DO have a named-entity in them
