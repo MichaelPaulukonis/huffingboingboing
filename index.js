@@ -17,19 +17,6 @@ function T() {
 var baseUrl = 'http://boingboing.net/page/1';
 
 // ### Utility Functions
-
-// This function lets us call `pick()` on any array to get a random element from it.
-// Array.prototype.pick = function() {
-//     return this[Math.floor(Math.random()*this.length)];
-// };
-
-// // This function lets us call `pickRemove()` on any array to get a random element
-// // from it, then remove that element so we can't get it again.
-// Array.prototype.pickRemove = function() {
-//     var index = Math.floor(Math.random()*this.length);
-//     return this.splice(index,1)[0];
-// };
-
 var pick = function(arr) {
     return arr[Math.floor(Math.random()*arr.length)];
 };
@@ -39,20 +26,18 @@ var pickRemove = function(arr) {
     return arr.splice(index,1)[0];
 };
 
+// crude fix for the encoding problems I've encountered
+// not sure what the best way to do this is. :-(
+var clean = function(text) {
+    text = text.replace(' ', ' ').replace('’', "\'");
+    text = text.replace('“', '"').replace('”', '"');
+    return text;
+};
+
 // ### Screen Scraping
-
-// var titles = [];
-// var h = $('.jknav a')
-// $.each(h, function(index, value) { titles.push($("<div/>").html(value.innerHTML).text()); })
-
-// We pass this function a category code (see `tweet` below). We grab the Google News
-// topics page for that category and load the html into `cheerio`. We parse the page for
-// text from the links in the left-hand bar, which becomes a list of topics.
-// For example, if we passed it 'e' for Entertainment, we might get: Miley Cyrus, Oscars,
-// Kanye West, and so on.
-function getTopics() {
-    console.log('inside of getTopics()');
-    var topics = [];
+function getHeadlines() {
+    console.log('inside of getHeadlines()');
+    var headlines = [];
     var dfd = new _.Deferred();
     request(baseUrl, function (error, response, body) {
 	console.log('inside of request');
@@ -65,45 +50,24 @@ function getTopics() {
 		var title = $(this).text();
 		// console.log(this);
 		// console.log(title);
-		var topic = {};
-		// topic.name = this.text();
-		topic.name = title;
-		topic.url = baseUrl + this.attr('href');
-		topics.push(topic);
+		var hl = {};
+		// hl.name = this.text();
+		hl.name = clean(title);
+		hl.url = baseUrl + this.attr('href');
+		headlines.push(hl);
 	    });
 
-	    dfd.resolve(topics);
+	    dfd.resolve(headlines);
 	}
 	else {
-	    console.log('getTopics.else');
+	    console.log('getHeadlines.else');
 	    dfd.reject();
 	}
     });
-    // The function returns a promise, and the promise resolves to the array of topics.
+    // The function returns a promise, and the promise resolves to the array of headlines.
     return dfd.promise();
 }
 
-// We pass this function a URL for a specific topic (for example:
-// [Miley Cyrus](https://news.google.com/news/section?pz=1&cf=all&ned=us&hl=en&q=Miley%20Cyrus).
-// We then get the page, feed the HTML to `cheerio`, and then pick a random headline
-// from the page.
-function getHeadline(url) {
-    var dfd = new _.Deferred();
-    request(url, function (error, response, body) {
-	if (!error && response.statusCode === 200) {
-	    var $ = cheerio.load(body);
-	    var headlines = $('.jknav a');
-	    // `pick()` doesn't work here because `headlines` isn't an array, so instead we use `cheerio`'s `eq` which
-	    // give us a matched element at a given index, and pass it a random number.
-	    var headline = headlines.eq(Math.floor(Math.random()*headlines.length)).text();
-	    dfd.resolve(headline);
-	}
-	else {
-	    dfd.reject();
-	}
-    });
-    return dfd.promise();
-}
 
 // ### Tweeting
 
@@ -130,27 +94,32 @@ function getHeadline(url) {
 // this will be... stupid.
 function tweet() {
 
-    getTopics().then(function(topics) {
-	console.log('returned from getTopics');
-	var h1 = pickRemove(topics);
-	var h2 = pickRemove(topics);
+    getHeadlines().then(function(headlines) {
+	console.log('returned from getHeadlines');
+	var h1 = pickRemove(headlines);
+	var h2 = pickRemove(headlines);
 
-	console.log(h1.name);
-	console.log(h2.name);
+	console.log('headline1: ' + h1.name);
 
 	// so. doesn't always work, if we don't have a named entity.
 	// fail: "Make you own geometrical papercraft mask"`
-	var h1s = nlp.spot(h1.name);
-	var h2s = nlp.spot(h2.name);
+        var p = nlp.pos(h1.name);
+        var tokens = p[0].tokens;
 
-	console.log('nlp complete');
+        for (var i = 0; i < tokens.length; i++) {
+            var t = tokens[i];
+            console.log('text: ' + t.text + ' (' + t.pos.tag + ')');
+        }
 
-	console.log(h1s);
-	console.log(h2s);
+	console.log('\n\nheadline2: ' + h2.name);
 
-	var sent = "";
-	sent = h1.name.replace(h1s[0].text, '') + " " + h2.name.replace(h2s[1].text, '');
-	console.log('sentence: ' + sent);
+        p = nlp.pos(h2.name);
+        tokens = p[0].tokens;
+
+        for (i = 0; i < tokens.length; i++) {
+            var t = tokens[i];
+            console.log('text: ' + t.text + ' (' + t.pos.tag + ')');
+        }
 
 	// so. this doesn't work. we will have to split apart using some other means.
 	// OR - only use those sentences that DO have a named-entity in them
@@ -158,13 +127,13 @@ function tweet() {
 	// use the named-entity from one in the other sentence?
 	// that could work.....
 
-	// var topic = topics.pickRemove();
+	// var topic = headlines.pickRemove();
 
 	// console.log(topic);
-	// getTopics().then(function(headline) {
+	// getHeadlines().then(function(headline) {
 	//     if (headline.indexOf(topic.name) > -1) {
-	// 	getTopics(categoryCodes.pickRemove()).then(function(topics) {
-	// 	    var newTopic = topics.pick();
+	// 	getHeadlines(categoryCodes.pickRemove()).then(function(headlines) {
+	// 	    var newTopic = headlines.pick();
 	// 	    var newHeadline = headline.replace(topic.name, newTopic.name);
 	// 	    console.log(newHeadline);
 	// 	    T.post('statuses/update', { status: newHeadline }, function(err, reply) {
@@ -197,4 +166,5 @@ setInterval(function () {
     catch (e) {
 	console.log(e);
     }
-}, 1000 * 60 * 60);
+// }, 1000 * 60 * 60);
+}, 5000 );
