@@ -6,6 +6,48 @@ As pioneered by fleshbots in [Huffing BoingBoing](http://bbs.boingboing.net/t/hu
 
 Gracelessly pillaged from Darius Kazemi's [@TwoHeadlinesBot](http://github.com/dariusk/twoheadlines).
 
+## roadmap
+* More strategies
+* Initial capitalization
+* Url shortener service
+** https://www.npmjs.org/package/shorturl
+** https://www.npmjs.org/package/google-url
+* Hook up with Twitter
+** (some bots never learn)
+* notes on strategies
+* a/an cleanup
+* punctuation cleanup
+* verb-tense cleanup
+
+
+## Notes on strategies
+The original twoheadlines bot had some advantages -- it retrieved headlines sorted by categories, and replaced the category text found in the headline with different category text.
+
+BoingBoing has no categories, and only present about 15 headlines at a time, per page.
+NB: instead of scraping a single page, maybe parse the RSS feed?
+
+At any rate, we don't have a pre-made category-text to look for, so we have to come up with (an)other stragegy|ies.
+
+### Strategy1 - noun replacement therapy
+We replace the nouns in one headline with the nouns from another headline.
+In order.
+
+### Strategy1 - noun replacement therapy
+We replace the nouns in one headline with the nouns from another headline.
+In reverse order.
+
+### Strategy2 - verbs
+Replace the verbs.
+This is more likely to be boring.
+
+### split on some part of speech
+Not all headlines will support this.
+And we have a limited pool to pick from.
+
+### Wood splitter
+Split each headline in two at a random word, regardless of context.
+Join the two together.
+More likely to be ungrammatical than other methods.
 
 ## Documentation
 See [the nice-looking explanation of index.js](http://tinysubversions.com/twoheadlines/docs/) in order to understand how the original bot works.

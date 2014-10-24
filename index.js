@@ -93,8 +93,6 @@ var dumpInfo = function(headline) {
 
     console.log('\n\nheadline: ' + headline);
 
-    // so. doesn't always work, if we don't have a named entity.
-    // fail: "Make you own geometrical papercraft mask"`
     var p = nlp.pos(headline);
     var tokens = p[0].tokens;
 
@@ -111,7 +109,8 @@ var stripWord = function(word) {
 
     var removals = ['"', ':', '-', ','];
 
-    for (var r in removals) {
+    for (var i = 0 ; i < removals.length; i++) {
+	var r = removals[i];
 	word = word.replace(r, '');
     }
 
@@ -161,6 +160,28 @@ var strategy1 = function(h1, h2) {
 
 };
 
+// simple strategy - replace all the nouns in one sentence with the nouns from another
+// It's something.
+var strategy2 = function(h1, h2) {
+
+    var sent = h1;
+
+    var nn1 = getNNarray(h1);
+    var nn2 = getNNarray(h2);
+    var nouns1 = nn1;
+    var nouns2 = nn2;
+
+    var longest = ( nn1.length > nn2.length ? nn1.length : nn2.length);
+
+    // the shortest list needs to be modded against its length
+    for (var i = 0; i < longest; i++) {
+	sent = sent.replace(nouns1[i % nouns1.length] , nouns2[i % nouns2.length]);
+    }
+
+    return sent;
+
+};
+
 
 // This won't work for BoingBoing, since there are no "Categories" where the category is in the headline
 // hrm.
@@ -186,7 +207,9 @@ function tweet() {
 
 	console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
 
-	console.log("replaced: " + strategy1(h1.name, h2.name));
+	var strategy = strategy2;
+
+	console.log("replaced: " + strategy(h1.name, h2.name));
 
 
 	// so. this doesn't work. we will have to split apart using some other means.
