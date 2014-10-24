@@ -10,10 +10,10 @@ Gracelessly pillaged from Darius Kazemi's [@TwoHeadlinesBot](http://github.com/d
 * More strategies
 * Initial capitalization
 * Url shortener service
-** https://www.npmjs.org/package/shorturl
-** https://www.npmjs.org/package/google-url
+ * https://www.npmjs.org/package/shorturl
+ * https://www.npmjs.org/package/google-url
 * Hook up with Twitter
-** (some bots never learn)
+ * (some bots never learn)
 * notes on strategies
 * a/an cleanup
 * punctuation cleanup
@@ -28,19 +28,24 @@ NB: instead of scraping a single page, maybe parse the RSS feed?
 
 At any rate, we don't have a pre-made category-text to look for, so we have to come up with (an)other stragegy|ies.
 
-### Strategy1 - noun replacement therapy
+### noun replacement therapy
 We replace the nouns in one headline with the nouns from another headline.
 In order.
 
-### Strategy1 - noun replacement therapy
+### therapy replacement noun
 We replace the nouns in one headline with the nouns from another headline.
 In reverse order.
 
-### Strategy2 - verbs
+### verbiform
 Replace the verbs.
 This is more likely to be boring.
 
-### split on some part of speech
+### nouniverbiformer
+replace both verbs and nouns.
+maybe boring.
+But maybe not. I'm iterating....
+
+### splitters!
 Not all headlines will support this.
 And we have a limited pool to pick from.
 
@@ -51,6 +56,13 @@ More likely to be ungrammatical than other methods.
 
 ## Documentation
 See [the nice-looking explanation of index.js](http://tinysubversions.com/twoheadlines/docs/) in order to understand how the original bot works.
+
+Using [nlp_compromise](https://www.npmjs.org/package/nlp_compromise), a so-small-it-can-work-in-the-browser NLP package.
+Since I don't plan on running this in the browser, I could use something else.
+But have been playing with it. So kept it.
+
+HOWEVER, nlp_compromise did not appear to play nice when `array.prototype` had things added to it (pick/pickRemove from twoheadlines). So they have "properly" been turned into functions that take an array. Not as much fun.
+
 
 ##Instructions
 
