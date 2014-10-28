@@ -34,8 +34,47 @@ var clean = function(text) {
     return text;
 };
 
+var headlinesFromStatic = function() {
+    var headlines = [
+	{ name: 'Music video: John Cale\'s new song for Lou Reed',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/music-video-john-cales-new.html' },
+	{ name: 'Who is Gamergate? Analysis of 316K tweets',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/who-is-gamergate-analysis-of.html' },
+	{ name: 'Thousands of Americans got sub-broadband ISP service, thanks to telcoms shenanigans',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/thousands-of-americans-got-sub.html' },
+	{ name: 'Ridley Scott to produce miniseries on rocket scientist, occultist Jack Parsons',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/ridley-scott-to-produce-minise.html' },
+	{ name: 'Krs-One was a Teenage Drug Courier',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/krs-one-was-a-teenage-drug-cou.html' },
+	{ name: 'Circling the globe with the mid-20th century\'s most brilliant matchbox art',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/circling-the-globe-with-the-mi.html' },
+	{ name: 'Video: Dock Ellis who pitched a no-hitter while on LSD',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/video-dock-ellis-who-pitched.html' },
+	{ name: 'The story of Venice\'s "gentleman thief" and an amazing art heist',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/the-story-of-venices-gentl.html' },
+	{ name: 'Putting your foot in your mouth',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/putting-your-foot-in-your-mout.html' },
+	{ name: 'Furniture from old Apple G5 towers',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/furniture-from-old-apple-g5-to.html' },
+	{ name: 'Why we love man versus nature struggles',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/themartian.html' },
+	{ name: 'The Peripheral: William Gibson vs William Gibson',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/the-peripheral-william-gibson.html' },
+	{ name: 'Our Magic, a documentary about magic by magicians',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/our-magic-a-documentary-about.html' },
+	{ name: 'Oh joy! Oh Joy Sex Toy is a book!',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/27/oh-joy-oh-joy-sex-toy-is-a-bo.html' },
+	{ name: 'Suitsy: The business suit onesie',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/27/suitsy-the-business-suit-ones.html' }
+    ];
+
+    var dfd = new _.Deferred().resolve(headlines);
+    // The function returns a promise, and the promise resolves to the array of headlines.
+    return dfd.promise();
+};
+
 // ### Screen Scraping
-function getHeadlines() {
+var headlinesFromPage1 = function() {
     // console.log('inside of getHeadlines()');
     var headlines = [];
     var dfd = new _.Deferred();
@@ -66,29 +105,10 @@ function getHeadlines() {
     });
     // The function returns a promise, and the promise resolves to the array of headlines.
     return dfd.promise();
-}
+};
 
 
-// ### Tweeting
-
-//      Category codes:
-//      w:  world
-//      n:  region
-//      b:  business<
-//      tc: technology
-//      e:  entertainment
-//      s:  sports
-
-// This is the core function that is called on a timer that initiates the @twoheadlines algorithm.
-// First, we get our list of topics from the Google News sidebar.
-// Then we pick-and-remove a random topic from that list.
-// Next we grab a random headline available for that topic.
-// If the topic itself is in the headline itself, we replace it with a new topic. (For example,
-// if `topic.name` is "Miley Cyrus" and `headline` is "Miley Cyrus Wins a Grammy", then we
-// get a topic from a different category of news and fill in the blank for "______ Wins a Grammy".)
-// If we're unable to find a headline where we can easily find/replace, we simply try again.
-
-
+// headline as string
 var dumpInfo = function(headline) {
 
     console.log('\n\nheadline: ' + headline);
@@ -107,15 +127,23 @@ var dumpInfo = function(headline) {
 
 var stripWord = function(word) {
 
-    var removals = ['"', ':', '-', ','];
+    // let punctuation and possessives remain
+    // TODO: unit-tests for various errors we encounter
+    // Venice's := Venice
+    // VENICE'S := VENICE
+    // etc.
+    var removals = ['"', ':', '-', ',', '\'s$'];
 
     for (var i = 0 ; i < removals.length; i++) {
 	var r = removals[i];
-	word = word.replace(r, '');
+	word = word.replace(new RegExp(r, 'i'), '');
     }
 
     return word;
 };
+
+
+
 
 var getNNarray = function(headline) {
 
@@ -133,69 +161,77 @@ var getNNarray = function(headline) {
 
 };
 
+var getPOSarray = function(headline, pos) {
+
+    var parts = [];
+    var tokens = nlp.pos(headline)[0].tokens;
+
+    for (var i = 0; i < tokens.length; i++) {
+        var t = tokens[i];
+	if (t.pos.tag === pos) {
+	    parts.push(stripWord(t.text));
+	}
+    }
+
+    return parts;
+
+};
+
 
 // simple strategy - replace all the nouns in one sentence with the nouns from another
 // It's something.
-var nounreplacement = function(h1, h2) {
+var posReplacement = function(h1, h2, pos) {
 
     var sent = h1;
 
-    var nn1 = getNNarray(h1);
-    var nn2 = getNNarray(h2);
-    var nouns1 = nn1;
-    var nouns2 = nn2;
+    var words1 = getPOSarray(h1, pos);
+    var words2 = getPOSarray(h2, pos);
 
-    var longest = ( nn1.length > nn2.length ? nn1.length : nn2.length);
+    var longest = ( words1.length > words2.length ? words1.length : words2.length);
 
     // the shortest list needs to be modded against its length
     for (var i = 0; i < longest; i++) {
-	sent = sent.replace(nouns1[i % nouns1.length] , nouns2[i % nouns2.length]);
-	// console.log(nouns1[i % nouns1.length]);
-	// console.log(nouns2[i % nouns1.length]);
-	sent = sent.replace(new RegExp(nouns1[i % nouns1.length], 'gi'), nouns2[i % nouns2.length]);
+	// console.log('replace: ' + words1[i % words1.length] + ' with: ' +  words2[i % words2.length]);
+	sent = sent.replace(new RegExp('\\b' + words1[i % words1.length] + '\\b', 'i'), words2[i % words2.length]);
     }
 
     return sent;
 
 };
 
-// simple strategy - replace all the nouns in one sentence with the nouns from another
-// It's something.
-// trouble with some invert calcs:
-// (when the two arrays are the same length?)
-//
-// h1: 'Interstellar' VFX give new insights into black holes
-// h2:Which crowdfunded privacy routers are worthy of your trust?
-// i: 0 invert: 1 n2.length: 2
-// i: 1 invert: 0 n2.length: 2
-//
-// i: 2 invert: -1 n2.length: 2
-//
-// reversenoun: trust? give new privacy routers into black undefined
-// noun normal: privacy routers give new trust? into black privacy routers
-var replacementnoun = function(h1, h2) {
+// loop through the second (smaller) array in reverse.
+// uh. wheeee?
+var replacementPos = function(h1, h2, pos) {
 
     var sent = h1;
 
-    var nn1 = getNNarray(h1);
-    var nn2 = getNNarray(h2);
-    var nouns1 = nn1;
-    var nouns2 = nn2;
+    var words1 = getPOSarray(h1, pos);
+    var words2 = getPOSarray(h2, pos);
 
-    var longest = ( nn1.length > nn2.length ? nn1.length : nn2.length);
+    var longest = ( words1.length > words2.length ? words1.length : words2.length);
 
+    // ugh ugh ugh ugh ugh
+    var w2i = words2.length;
     // the shortest list needs to be modded against its length
     for (var i = 0; i < longest; i++) {
-	var invert = (nouns2.length - 1 - i) % nouns2.length;
-	console.log('i: ' + i + ' invert: ' + invert + ' n2.length: ' + nouns2.length);
-	sent = sent.replace(new RegExp(nouns1[i % nouns1.length], 'gi'), nouns2[invert]);
-	// sent = sent.replace(nouns1[i % nouns1.length] , nouns2[invert]);
+	w2i--;
+	if (w2i < 0) w2i = words2.length - 1;
+	var invert = w2i;
+	// console.log('i: ' + i + ' invert: ' + invert);
+	sent = sent.replace(new RegExp('\\b' + words1[i % words1.length] + '\\b', 'i'), words2[invert]);
     }
 
     return sent;
 
 };
 
+// input: two headlines as strings
+// output: a strategy method
+var getStrategy = function(h1, h2) {
+    var strategy;
+    strategy = (Math.random() > 0.5) ? posReplacement : replacementPos;
+    return strategy;
+};
 
 
 // This won't work for BoingBoing, since there are no "Categories" where the category is in the headline
@@ -206,26 +242,25 @@ function tweet() {
 
     getHeadlines().then(function(headlines) {
 
+	// console.log(headlines);
+
 	var h1 = pickRemove(headlines);
 	var h2 = pickRemove(headlines);
-
-	// for (var i = 0; i < headlines.length; i++) {
-	//     // console.log(headlines[i]);
-	//     dumpInfo(headlines[i].name);
-	// }
 
 	// still having trouble w/ quotes:
 	// h1: "Kitty help," a photo shared in the Boing Boing Flickr Pool
 	// h2:Denim maintenance thread
 	// replaced: "Kitty Denim a maintenance thread shared in the Boing Boing Flickr Pool
 
-
 	console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
 
-	var strategy = nounreplacement;
+	var strategy = getStrategy(h1.name, h2.name);;
 
-	console.log("reversenoun: " + replacementnoun(h1.name, h2.name));
-	console.log("noun normal: " + nounreplacement(h1.name, h2.name));
+	// NOPE: this is a step in the right direction, but not the right step
+	console.log(strategy(h1.name, h2.name, 'NN'));
+
+	// console.log("reversenoun: " + replacementPos(h1.name, h2.name));
+	// console.log("noun normal: " + posReplacement(h1.name, h2.name));
 
 	// so. this doesn't work. we will have to split apart using some other means.
 	// OR - only use those sentences that DO have a named-entity in them
@@ -260,6 +295,18 @@ function tweet() {
     });
 }
 
+var getHeadlines = headlinesFromPage1;
+// var getHeadlines = headlinesFromStatic; // a static method for testing
+
+// var h1 = {name: ' Ridley Scott to produce miniseries on rocket scientist, occultist Jack Parsons' };
+// var h2 = { name: 'Circling the globe with the mid-20th century\'s most brilliant matchbox art' };
+
+// console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
+
+// console.log("reversenoun: " + replacementPos(h1.name, h2.name));
+// console.log("noun normal: " + posReplacement(h1.name, h2.name));
+
+// return;
 
 // Tweets once on initialization.
 tweet();
@@ -272,5 +319,5 @@ setInterval(function () {
     catch (e) {
 	console.log(e);
     }
-// }, 1000 * 60 * 60);
+    // }, 1000 * 60 * 60);
 }, 5000 );
