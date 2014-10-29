@@ -40,32 +40,62 @@ var headlinesFromStatic = function() {
 	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/music-video-john-cales-new.html' },
 	{ name: 'Who is Gamergate? Analysis of 316K tweets',
 	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/who-is-gamergate-analysis-of.html' },
-	{ name: 'Thousands of Americans got sub-broadband ISP service, thanks to telcoms shenanigans',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/thousands-of-americans-got-sub.html' },
-	{ name: 'Ridley Scott to produce miniseries on rocket scientist, occultist Jack Parsons',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/ridley-scott-to-produce-minise.html' },
-	{ name: 'Krs-One was a Teenage Drug Courier',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/krs-one-was-a-teenage-drug-cou.html' },
+	// { name: 'Thousands of Americans got sub-broadband ISP service, thanks to telcoms shenanigans',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/thousands-of-americans-got-sub.html' },
+	// { name: 'Ridley Scott to produce miniseries on rocket scientist, occultist Jack Parsons',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/ridley-scott-to-produce-minise.html' },
+	// { name: 'Krs-One was a Teenage Drug Courier',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/krs-one-was-a-teenage-drug-cou.html' },
 	{ name: 'Circling the globe with the mid-20th century\'s most brilliant matchbox art',
 	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/circling-the-globe-with-the-mi.html' },
 	{ name: 'Video: Dock Ellis who pitched a no-hitter while on LSD',
 	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/video-dock-ellis-who-pitched.html' },
 	{ name: 'The story of Venice\'s "gentleman thief" and an amazing art heist',
 	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/the-story-of-venices-gentl.html' },
-	{ name: 'Putting your foot in your mouth',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/putting-your-foot-in-your-mout.html' },
-	{ name: 'Furniture from old Apple G5 towers',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/furniture-from-old-apple-g5-to.html' },
-	{ name: 'Why we love man versus nature struggles',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/themartian.html' },
+	// { name: 'Putting your foot in your mouth',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/putting-your-foot-in-your-mout.html' },
+	// { name: 'Furniture from old Apple G5 towers',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/furniture-from-old-apple-g5-to.html' },
+	// { name: 'Why we love man versus nature struggles',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/themartian.html' },
 	{ name: 'The Peripheral: William Gibson vs William Gibson',
 	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/the-peripheral-william-gibson.html' },
-	{ name: 'Our Magic, a documentary about magic by magicians',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/our-magic-a-documentary-about.html' },
+	// { name: 'Our Magic, a documentary about magic by magicians',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/our-magic-a-documentary-about.html' },
 	{ name: 'Oh joy! Oh Joy Sex Toy is a book!',
 	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/27/oh-joy-oh-joy-sex-toy-is-a-bo.html' },
 	{ name: 'Suitsy: The business suit onesie',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/27/suitsy-the-business-suit-ones.html' }
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/27/suitsy-the-business-suit-ones.html' },
+	// { name: 'The rise and fall of American Hallowe\'en costumes',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/the-rise-and-fall-of-american.html' },
+	// { name: 'Eight year old\'s incredible prize-winning scorpion photo',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/eight-year-olds-incredible-p.html' },
+	// { name: 'Verizon\'s new big budget tech-news site prohibits reporting on NSA spying or net neutrality',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/verizons-new-big-budget-tech.html' },
+	// { name: 'J. Mascis covers Mazzy Star',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/j-mascis-covers-mazzy-star.html' },
+	{ name: 'Painting with fire',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/painting-with-fire.html' },
+	{ name: 'Star Wars Costumes: The Original Trilogy',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/star-wars-costumes-the-origin.html' },
+	{ name: 'TOM THE DANCING BUG: Ernest Hemingway\'s New Typewriter',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/tom-the-dancing-bug-ernest-he.html' },
+	{ name: 'Pope: God "is not a magician" and Big Bang and evolution are A-ok',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/pope-god-is-not-a-magician.html' },
+	// { name: 'Why Are Witches Green?',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/why-are-witches-green.html' },
+	{ name: 'Obamacare: what it is, what it\'s not',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/obamacare-what-it-is-what-it.html' },
+	{ name: 'Hallowe\'en Makie mischief: Barbie freakout!',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/halloween-makie-mischief-ba.html' },
+	// { name: 'Every artist\'s "how I made it" talk, ever',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/every-artists-how-i-made-i.html' },
+	{ name: 'The Terrible Sea Lion: a social media parable',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/the-terrible-sea-lion-a-socia.html' },
+	{ name: 'Which online services will stick up for you when the copyright bullies knock?',
+	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/which-online-services-will-sti.html' },
+	// { name: 'Political mailer includes opponent\'s SSN and driver\'s license number',
+	//   url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/political-mailer-includes-oppo.html' }
     ];
 
     var dfd = new _.Deferred().resolve(headlines);
@@ -95,7 +125,7 @@ var headlinesFromPage1 = function() {
 		hl.url = baseUrl + this.attr('href');
 		headlines.push(hl);
 	    });
-
+	    console.log(headlines);
 	    dfd.resolve(headlines);
 	}
 	else {
@@ -178,9 +208,107 @@ var getPOSarray = function(headline, pos) {
 };
 
 
+// this is SOMETIMES FAILING
+// WHEN THE FOLLOWING COMBO OCCURS (as well as )
+// h1: Why we love man versus nature struggles
+// h2:Who is Gamergate? Analysis of 316K tweets
+//
+// NB: no error when the sentences are in the REVERSE ORDER
+// so... something is left dangling ????
+var getPOSarrayFull = function(headline) {
+
+    var parts = [];
+    var target = (headline == 'Who is Gamergate? Analysis of 316K tweets');
+
+    try {
+	var n = nlp.pos(headline);
+	var tokens = n[0].tokens;
+	for (var i = 0; i < tokens.length; i++) {
+            var t = tokens[i];
+	    parts.push({ word: stripWord(t.text), pos: t.pos.tag });
+	}
+    } catch (err) {
+	console.log(err.message);
+    }
+
+    return parts;
+
+};
+
+var firstPOS = function(parts, pos) {
+
+    var word = '';
+
+    for(var i = 0; i < parts.length; i++) {
+	if (parts[i].pos == pos) {
+	    word = parts[i].word;
+	    break;
+	}
+    }
+
+    return word;
+};
+
+// split on inner punctuation
+var splitterPunct = function(h1, h2) {
+
+    // this should be accecptable
+    // 	{ name: 'Who is Gamergate? Analysis of 316K tweets'
+
+    var h1Loc = h1.indexOf(':');
+    var h2Loc = h2.indexOf(':');
+
+    var sent = h1.slice(0, h1Loc) + h2.slice(h2Loc);
+    return sent;
+
+};
+
+var splitterPos = function(h1,h2) {
+
+    // console.log('splitterPos');
+
+    var pos = 'CC';
+
+    var words1 = getPOSarrayFull(h1);
+    var words2 = getPOSarrayFull(h2);
+
+    // sentence1 up to CC
+    // then sentence2 from CC
+
+    // we don't do token replacement, because then we lose punctuation, etc.
+    var firstCC = firstPOS(words1, pos);
+    var secondCC = firstPOS(words2, pos);
+
+    var firstLoc = h1.indexOf(firstCC);
+    var secondLoc = h2.indexOf(secondCC); // - secondCC.length;
+
+    var sent = h1.slice(0, firstLoc) + h2.slice(secondLoc);
+
+    return sent;
+
+
+};
+
+
+var replaceBuilder = function(pos) {
+
+
+    return b;
+
+};
+
+var pr = function(pos) {
+
+    return function(h1, h2) { return posReplacement(h1,h2,pos); };
+
+};
+
+
 // simple strategy - replace all the nouns in one sentence with the nouns from another
 // It's something.
 var posReplacement = function(h1, h2, pos) {
+
+    // console.log('posReplacement');
 
     var sent = h1;
 
@@ -202,6 +330,8 @@ var posReplacement = function(h1, h2, pos) {
 // loop through the second (smaller) array in reverse.
 // uh. wheeee?
 var replacementPos = function(h1, h2, pos) {
+
+    // console.log('replacementPos');
 
     var sent = h1;
 
@@ -225,12 +355,70 @@ var replacementPos = function(h1, h2, pos) {
 
 };
 
+var hasCCs = function(h1, h2) {
+
+    var h1f = false;
+    var h2f = false;
+
+    for (var i = 0; i < h1.length; i++) {
+	if (h1[i].pos == 'CC') {
+	    h1f = true;
+	    break;
+	}
+    }
+
+    for (i = 0; i < h2.length; i++) {
+	if (h2[i].pos == 'CC') {
+	    h2f = true;
+	    break;
+	}
+    }
+
+    var found = h1f && h2f;
+
+    return found;
+
+};
+
+var hasColons = function(h1, h2) {
+
+    return (h1.indexOf(':') > -1 && h2.indexOf(':') > -1);
+
+};
+
+// 50-50 chance (unless override)
+var coinflip = function(chance) {
+
+    if (!chance) chance = 0.5;
+
+    return (Math.random() > chance);
+
+};
+
 // input: two headlines as strings
 // output: a strategy method
 var getStrategy = function(h1, h2) {
+
+    var hp1 = getPOSarrayFull(h1);
+    var hp2 = getPOSarrayFull(h2);
+    var ccs = hasCCs(hp1,hp2);
+    var colons = hasColons(h1, h2);
+
     var strategy;
-    strategy = (Math.random() > 0.5) ? posReplacement : replacementPos;
+
+    if (colons && coinflip(0.75)) {
+	strategy = splitterPunct;
+    }
+    else if(ccs && coinflip(0.75)) {
+	strategy = splitterPos;
+    }
+
+    if (!strategy) {
+	strategy = (Math.random() > 0.5) ? posReplacement : replacementPos;
+    }
+
     return strategy;
+
 };
 
 
@@ -247,26 +435,20 @@ function tweet() {
 	var h1 = pickRemove(headlines);
 	var h2 = pickRemove(headlines);
 
-	// still having trouble w/ quotes:
-	// h1: "Kitty help," a photo shared in the Boing Boing Flickr Pool
-	// h2:Denim maintenance thread
-	// replaced: "Kitty Denim a maintenance thread shared in the Boing Boing Flickr Pool
-
 	console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
 
 	var strategy = getStrategy(h1.name, h2.name);;
 
-	// NOPE: this is a step in the right direction, but not the right step
-	console.log(strategy(h1.name, h2.name, 'NN'));
-
-	// console.log("reversenoun: " + replacementPos(h1.name, h2.name));
-	// console.log("noun normal: " + posReplacement(h1.name, h2.name));
-
-	// so. this doesn't work. we will have to split apart using some other means.
-	// OR - only use those sentences that DO have a named-entity in them
-	// but I don't know if that will split well....
-	// use the named-entity from one in the other sentence?
-	// that could work.....
+	try {
+	    // NOPE: this is a step in the right direction, but not the right step
+	    var newSentence = strategy(h1.name, h2.name, 'NN');
+	    console.log(newSentence);
+	    if(!newSentence) {
+		console.log('NOTHING NOTHING NOTHING');
+	    }
+	} catch (err) {
+	    console.log('Error: ' + err.message);
+	}
 
 	// var topic = headlines.pickRemove();
 
@@ -295,18 +477,8 @@ function tweet() {
     });
 }
 
-var getHeadlines = headlinesFromPage1;
-// var getHeadlines = headlinesFromStatic; // a static method for testing
-
-// var h1 = {name: ' Ridley Scott to produce miniseries on rocket scientist, occultist Jack Parsons' };
-// var h2 = { name: 'Circling the globe with the mid-20th century\'s most brilliant matchbox art' };
-
-// console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
-
-// console.log("reversenoun: " + replacementPos(h1.name, h2.name));
-// console.log("noun normal: " + posReplacement(h1.name, h2.name));
-
-// return;
+// var getHeadlines = headlinesFromPage1;
+var getHeadlines = headlinesFromStatic; // a static method for testing
 
 // Tweets once on initialization.
 tweet();
@@ -320,4 +492,4 @@ setInterval(function () {
 	console.log(e);
     }
     // }, 1000 * 60 * 60);
-}, 5000 );
+}, 500 );
