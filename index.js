@@ -8,10 +8,12 @@
 var request = require('request');
 var cheerio = require('cheerio');
 var _ = require('underscore.deferred');
+var dfd = new _.Deferred();
 var nlp = require('nlp_compromise');
 var config = require('./config.js');
 var Twit = require('twit');
 var T = new Twit(config);
+var shorturl = require('shorturl');
 
 var baseUrl = 'http://boingboing.net/page/1';
 
@@ -44,73 +46,74 @@ var direction = {
 // TODO: move to external file
 var headlinesFromStatic = function() {
     var headlines = [
-	{ name: 'Ministry\'s "(Everyday Is) Halloween"',
-	  url: '' },
-	{ name: 'The most terrifying non-horror movies',
-	  url: '' },
+	// { name: 'Ministry\'s "(Everyday Is) Halloween"',
+	//   url: '' },
+	// { name: 'The most terrifying non-horror movies',
+	//   url: '' },
 	{ name: 'Music video: John Cale\'s new song for Lou Reed',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/music-video-john-cales-new.html' },
+	  url: 'http://boingboing.net/2014/10/28/music-video-john-cales-new.html' },
 	{ name: 'Who is Gamergate? Analysis of 316K tweets',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/who-is-gamergate-analysis-of.html' },
+	  url: 'http://boingboing.net/2014/10/28/who-is-gamergate-analysis-of.html' },
 	{ name: 'Thousands of Americans got sub-broadband ISP service, thanks to telcoms shenanigans',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/thousands-of-americans-got-sub.html' },
+	  url: 'http://boingboing.net/2014/10/28/thousands-of-americans-got-sub.html' },
 	{ name: 'Ridley Scott to produce miniseries on rocket scientist, occultist Jack Parsons',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/ridley-scott-to-produce-minise.html' },
+	  url: 'http://boingboing.net/2014/10/28/ridley-scott-to-produce-minise.html' },
 	{ name: 'Krs-One was a Teenage Drug Courier',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/krs-one-was-a-teenage-drug-cou.html' },
+	  url: 'http://boingboing.net/2014/10/28/krs-one-was-a-teenage-drug-cou.html' },
 	{ name: 'Circling the globe with the mid-20th century\'s most brilliant matchbox art',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/circling-the-globe-with-the-mi.html' },
+	  url: 'http://boingboing.net/2014/10/28/circling-the-globe-with-the-mi.html' },
 	{ name: 'Video: Dock Ellis who pitched a no-hitter while on LSD',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/video-dock-ellis-who-pitched.html' },
+	  url: 'http://boingboing.net/2014/10/28/video-dock-ellis-who-pitched.html' },
 	{ name: 'The story of Venice\'s "gentleman thief" and an amazing art heist',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/the-story-of-venices-gentl.html' },
+	  url: 'http://boingboing.net/2014/10/28/the-story-of-venices-gentl.html' },
 	{ name: 'Putting your foot in your mouth',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/putting-your-foot-in-your-mout.html' },
+	  url: 'http://boingboing.net/2014/10/28/putting-your-foot-in-your-mout.html' },
 	{ name: 'Furniture from old Apple G5 towers',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/furniture-from-old-apple-g5-to.html' },
+	  url: 'http://boingboing.net/2014/10/28/furniture-from-old-apple-g5-to.html' },
 	{ name: 'Why we love man versus nature struggles',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/themartian.html' },
+	  url: 'http://boingboing.net/2014/10/28/themartian.html' },
 	{ name: 'The Peripheral: William Gibson vs William Gibson',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/the-peripheral-william-gibson.html' },
+	  url: 'http://boingboing.net/2014/10/28/the-peripheral-william-gibson.html' },
 	{ name: 'Our Magic, a documentary about magic by magicians',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/our-magic-a-documentary-about.html' },
+	  url: 'http://boingboing.net/2014/10/28/our-magic-a-documentary-about.html' },
 	{ name: 'Oh joy! Oh Joy Sex Toy is a book!',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/27/oh-joy-oh-joy-sex-toy-is-a-bo.html' },
+	  url: 'http://boingboing.net/2014/10/27/oh-joy-oh-joy-sex-toy-is-a-bo.html' },
 	{ name: 'Suitsy: The business suit onesie',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/27/suitsy-the-business-suit-ones.html' },
+	  url: 'http://boingboing.net/2014/10/27/suitsy-the-business-suit-ones.html' },
 	{ name: 'The rise and fall of American Hallowe\'en costumes',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/the-rise-and-fall-of-american.html' },
+	  url: 'http://boingboing.net/2014/10/29/the-rise-and-fall-of-american.html' },
 	{ name: 'Eight year old\'s incredible prize-winning scorpion photo',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/eight-year-olds-incredible-p.html' },
+	  url: 'http://boingboing.net/2014/10/29/eight-year-olds-incredible-p.html' },
 	{ name: 'Verizon\'s new big budget tech-news site prohibits reporting on NSA spying or net neutrality',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/verizons-new-big-budget-tech.html' },
+	  url: 'http://boingboing.net/2014/10/29/verizons-new-big-budget-tech.html' },
 	{ name: 'J. Mascis covers Mazzy Star',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/j-mascis-covers-mazzy-star.html' },
+	  url: 'http://boingboing.net/2014/10/29/j-mascis-covers-mazzy-star.html' },
 	{ name: 'Painting with fire',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/painting-with-fire.html' },
+	  url: 'http://boingboing.net/2014/10/29/painting-with-fire.html' },
 	{ name: 'Star Wars Costumes: The Original Trilogy',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/star-wars-costumes-the-origin.html' },
+	  url: 'http://boingboing.net/2014/10/29/star-wars-costumes-the-origin.html' },
 	{ name: 'TOM THE DANCING BUG: Ernest Hemingway\'s New Typewriter',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/tom-the-dancing-bug-ernest-he.html' },
+	  url: 'http://boingboing.net/2014/10/29/tom-the-dancing-bug-ernest-he.html' },
 	{ name: 'Pope: God "is not a magician" and Big Bang and evolution are A-ok',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/pope-god-is-not-a-magician.html' },
+	  url: 'http://boingboing.net/2014/10/29/pope-god-is-not-a-magician.html' },
 	{ name: 'Why Are Witches Green?',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/why-are-witches-green.html' },
+	  url: 'http://boingboing.net/2014/10/29/why-are-witches-green.html' },
 	{ name: 'Obamacare: what it is, what it\'s not',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/29/obamacare-what-it-is-what-it.html' },
+	  url: 'http://boingboing.net/2014/10/29/obamacare-what-it-is-what-it.html' },
 	{ name: 'Hallowe\'en Makie mischief: Barbie freakout!',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/halloween-makie-mischief-ba.html' },
+	  url: 'http://boingboing.net/2014/10/28/halloween-makie-mischief-ba.html' },
 	{ name: 'Every artist\'s "how I made it" talk, ever',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/every-artists-how-i-made-i.html' },
+	  url: 'http://boingboing.net/2014/10/28/every-artists-how-i-made-i.html' },
 	{ name: 'The Terrible Sea Lion: a social media parable',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/the-terrible-sea-lion-a-socia.html' },
+	  url: 'http://boingboing.net/2014/10/28/the-terrible-sea-lion-a-socia.html' },
 	{ name: 'Which online services will stick up for you when the copyright bullies knock?',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/which-online-services-will-sti.html' },
+	  url: 'http://boingboing.net/2014/10/28/which-online-services-will-sti.html' },
 	{ name: 'Political mailer includes opponent\'s SSN and driver\'s license number',
-	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/political-mailer-includes-oppo.html' }
+	  url: 'http://boingboing.net/2014/10/28/political-mailer-includes-oppo.html' }
     ];
 
-    var dfd = new _.Deferred().resolve(headlines);
+    // var dfd = new _.Deferred().resolve(headlines);
+    dfd.resolve(headlines);
     // The function returns a promise, and the promise resolves to the array of headlines.
     return dfd.promise();
 };
@@ -422,46 +425,101 @@ var getStrategy = function(h1, h2) {
     return strategy;
 };
 
+var picker = function(headlines) {
+
+    console.log('picker!');
+
+
+    var h1 = pickRemove(headlines);
+    var h2 = pickRemove(headlines);
+
+    console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
+
+    var two = [h1, h2];
+
+    console.log(two);
+
+    return  dfd.resolve(two);
+
+};
+
+// we do NOT have the data here... :-(
+var tweeter = function(headlines) {
+
+    console.log('tweeter!');
+    console.log(arguments);
+    // console.log(headlines);
+
+    // not random at the mo
+    // because passing in original array WTF?!?!?
+    var h1 = headlines[0];
+    var h2 = headlines[1];
+
+    // var h1 = pickRemove(headlines);
+    // var h2 = pickRemove(headlines);
+
+    console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
+
+    var strategy = getStrategy(h1.name, h2.name);;
+
+    try {
+	var newSentence = strategy(h1.name, h2.name);
+	// capitalize first word
+	// I tried inflection's "titleize" but that zapped acronyms like "SSN" and "NSA"
+	newSentence = newSentence.slice(0,1).toUpperCase() + newSentence.slice(1);
+	console.log(newSentence);
+	if(!newSentence) {
+	    console.log('NOTHING NOTHING NOTHING');
+	}
+    } catch (err) {
+	console.log('Error: ' + err.message);
+    }
+
+    if (config.tweet_on) {
+	T.post('statuses/update', { status: newSentence }, function(err, reply) {
+	    if (err) {
+		console.log('error:', err);
+	    }
+	    else {
+		//console.log('reply:', reply);
+	    }
+	});
+    }
+
+};
+
+// we have the data HERE
+var shortenit = function(hs) {
+
+    console.log('shortenit!');
+
+    console.log(hs);
+
+    // plan on using https://www.npmjs.org/package/shorturl
+
+    return dfd.resolve(hs).promise();
+
+
+};
+
 
 function tweet() {
 
-    getHeadlines().then(function(headlines) {
+    // http://blog.mediumequalsmessage.com/promise-deferred-objects-in-javascript-pt2-practical-use
+    // http://stackoverflow.com/questions/17216438/chain-multiple-then-in-jquery-when
 
-	// console.log(headlines);
 
-	var h1 = pickRemove(headlines);
-	var h2 = pickRemove(headlines);
+    dfd = new _.Deferred();
+    // getHeadlines().then(function(headlines) { tweeter(headlines); });
+    // TODO: actually pick TWO headlines first,
+    // then shorten each
+    getHeadlines()
+	.then(function(hs1) { return picker(hs1); })
+	.then(function(hs2) { return shortenit(hs2); })
+    // WTF? the ENTIRE array is passed in at the end. I DO NOT UNDERSTAND
+	.then(function(h3) { tweeter(h3); });
 
-	console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
-
-	var strategy = getStrategy(h1.name, h2.name);;
-
-	try {
-	    var newSentence = strategy(h1.name, h2.name);
-	    // capitalize first word
-	    // I tried inflection's "titleize" but that zapped acronyms like "SSN" and "NSA"
-	    newSentence = newSentence.slice(0,1).toUpperCase() + newSentence.slice(1);
-	    console.log(newSentence);
-	    if(!newSentence) {
-		console.log('NOTHING NOTHING NOTHING');
-	    }
-	} catch (err) {
-	    console.log('Error: ' + err.message);
-	}
-
-        if (config.tweet_on) {
-	    T.post('statuses/update', { status: newSentence }, function(err, reply) {
-	        if (err) {
-		    console.log('error:', err);
-	        }
-	        else {
-		    //console.log('reply:', reply);
-	        }
-	    });
-        }
-
-    });
-}
+};
 
 // Tweets every 15 minutes.
 setInterval(function () {
@@ -473,10 +531,6 @@ setInterval(function () {
     }
 }, 1000 * config.minutes * config.seconds);
 
-
-// if (config.static_lib) {
-// var getHeadlines = headlinesFromStatic; // a static method for testing
-// var getHeadlines = headlinesFromPage1;
 
 // hard-coded headlines, or OMG ITS ALIVE
 var getHeadlines = (config.static_lib ? headlinesFromStatic : headlinesFromPage1);
