@@ -8,9 +8,10 @@ var request = require('request');
 var cheerio = require('cheerio');
 var _ = require('underscore.deferred');
 var nlp = require('nlp_compromise');
-var inflection = require('inflection');
+// var inflection = require('inflection');
+var config = require('./config.js');
 var Twit = require('twit');
-var T = new Twit(require('./config.js'));
+var T = new Twit(config);
 
 var baseUrl = 'http://boingboing.net/page/1';
 
@@ -123,7 +124,7 @@ var headlinesFromPage1 = function() {
 		hl.url = baseUrl + this.attr('href');
 		headlines.push(hl);
 	    });
-	    console.log(headlines);
+	    // console.log(headlines);
 	    dfd.resolve(headlines);
 	}
 	else {
@@ -434,14 +435,16 @@ function tweet() {
 	    console.log('Error: ' + err.message);
 	}
 
-	T.post('statuses/update', { status: newSentence }, function(err, reply) {
-	    if (err) {
-		console.log('error:', err);
-	    }
-	    else {
-		//console.log('reply:', reply);
-	    }
-	});
+        if (config.tweet_on) {
+	    T.post('statuses/update', { status: newSentence }, function(err, reply) {
+	        if (err) {
+		    console.log('error:', err);
+	        }
+	        else {
+		    //console.log('reply:', reply);
+	        }
+	    });
+        }
 
     });
 }
@@ -460,4 +463,4 @@ setInterval(function () {
     catch (e) {
 	console.log(e);
     }
-}, 1000 * 60 * 15);
+}, 1000 * 60 * 60);
