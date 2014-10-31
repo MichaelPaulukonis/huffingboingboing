@@ -9,12 +9,9 @@ var cheerio = require('cheerio');
 var _ = require('underscore.deferred');
 var nlp = require('nlp_compromise');
 var inflection = require('inflection');
-// var Twit = require('twit');
-// var T = new Twit(require('./config.js'));
-function T() {
-    function post() { }
-}
-// var baseUrl = 'http://news.google.com';
+var Twit = require('twit');
+var T = new Twit(require('./config.js'));
+
 var baseUrl = 'http://boingboing.net/page/1';
 
 // ### Utility Functions
@@ -291,20 +288,6 @@ var splitterPos = function(h1,h2) {
 };
 
 
-var replaceBuilder = function(pos) {
-
-
-    return b;
-
-};
-
-var pr = function(pos) {
-
-    return function(h1, h2) { return posReplacement(h1,h2,pos); };
-
-};
-
-
 // simple strategy - replace all the nouns in one sentence with the nouns from another
 // It's something.
 var posReplacement = function(h1, h2, pos) {
@@ -442,7 +425,7 @@ function tweet() {
 
 	try {
 	    // NOPE: this is a step in the right direction, but not the right step
-	    var newSentence = inflection.titleize(strategy(h1.name, h2.name, 'NN'));
+	    var newSentence = strategy(h1.name, h2.name);
 	    console.log(newSentence);
 	    if(!newSentence) {
 		console.log('NOTHING NOTHING NOTHING');
@@ -451,35 +434,20 @@ function tweet() {
 	    console.log('Error: ' + err.message);
 	}
 
-	// var topic = headlines.pickRemove();
+	T.post('statuses/update', { status: newSentence }, function(err, reply) {
+	    if (err) {
+		console.log('error:', err);
+	    }
+	    else {
+		//console.log('reply:', reply);
+	    }
+	});
 
-	// console.log(topic);
-	// getHeadlines().then(function(headline) {
-	//     if (headline.indexOf(topic.name) > -1) {
-	// 	getHeadlines(categoryCodes.pickRemove()).then(function(headlines) {
-	// 	    var newTopic = headlines.pick();
-	// 	    var newHeadline = headline.replace(topic.name, newTopic.name);
-	// 	    console.log(newHeadline);
-	// 	    T.post('statuses/update', { status: newHeadline }, function(err, reply) {
-	// 		if (err) {
-	// 		    console.log('error:', err);
-	// 		}
-	// 		else {
-	// 		    console.log('reply:', reply);
-	// 		}
-	// 	    });
-	// 	});
-	//     }
-	//     else {
-	// 	console.log('couldn\'t find a headline match, trying again...');
-	// 	tweet();
-	//     }
-	// });
     });
 }
 
-// var getHeadlines = headlinesFromPage1;
-var getHeadlines = headlinesFromStatic; // a static method for testing
+var getHeadlines = headlinesFromPage1;
+// var getHeadlines = headlinesFromStatic; // a static method for testing
 
 // Tweets once on initialization.
 tweet();
@@ -492,5 +460,4 @@ setInterval(function () {
     catch (e) {
 	console.log(e);
     }
-    // }, 1000 * 60 * 60);
-}, 500 );
+}, 1000 * 60 * 15);
