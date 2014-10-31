@@ -44,6 +44,10 @@ var direction = {
 // TODO: move to external file
 var headlinesFromStatic = function() {
     var headlines = [
+	{ name: 'Ministry\'s "(Everyday Is) Halloween"',
+	  url: '' },
+	{ name: 'The most terrifying non-horror movies',
+	  url: '' },
 	{ name: 'Music video: John Cale\'s new song for Lou Reed',
 	  url: 'http://boingboing.net/page/1http://boingboing.net/2014/10/28/music-video-john-cales-new.html' },
 	{ name: 'Who is Gamergate? Analysis of 316K tweets',
@@ -170,7 +174,7 @@ var stripWord = function(word) {
     // Venice's := Venice
     // VENICE'S := VENICE
     // etc.
-    var removals = ['"', ':', '-', ',', '\'s$'];
+    var removals = ['"', ':', '-', ',', '\'s$', '\\(', '\\)', '\\[', '\\]' ];
 
     for (var i = 0 ; i < removals.length; i++) {
 	var r = removals[i];
@@ -470,8 +474,8 @@ setInterval(function () {
 }, 1000 * config.minutes * config.seconds);
 
 
-var getHeadlines = headlinesFromPage1;
-// var getHeadlines = headlinesFromStatic; // a static method for testing
+// var getHeadlines = headlinesFromPage1;
+var getHeadlines = headlinesFromStatic; // a static method for testing
 
 // Tweets once on initialization.
 tweet();
