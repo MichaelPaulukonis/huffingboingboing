@@ -474,8 +474,12 @@ setInterval(function () {
 }, 1000 * config.minutes * config.seconds);
 
 
+// if (config.static_lib) {
+// var getHeadlines = headlinesFromStatic; // a static method for testing
 // var getHeadlines = headlinesFromPage1;
-var getHeadlines = headlinesFromStatic; // a static method for testing
+
+// hard-coded headlines, or OMG ITS ALIVE
+var getHeadlines = (config.static_lib ? headlinesFromStatic : headlinesFromPage1);
 
 // Tweets once on initialization.
 tweet();
