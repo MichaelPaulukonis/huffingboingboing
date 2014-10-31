@@ -1,14 +1,14 @@
 // ### Libraries and globals
 
-// This bot works by inspecting the front page of Google News. So we need
-// to use `request` to make HTTP requests, `cheerio` to parse the page using
-// a jQuery-like API, `underscore.deferred` for [promises](http://otaqui.com/blog/1637/introducing-javascript-promises-aka-futures-in-google-chrome-canary/),
+// This bot works by inspecting the front page of BoingBoing.
+// So we need to use `request` to make HTTP requests,
+//`cheerio` to parse the page using a jQuery-like API,
+// `underscore.deferred` for [promises](http://otaqui.com/blog/1637/introducing-javascript-promises-aka-futures-in-google-chrome-canary/),
 // and `twit` as our Twitter API library.
 var request = require('request');
 var cheerio = require('cheerio');
 var _ = require('underscore.deferred');
 var nlp = require('nlp_compromise');
-// var inflection = require('inflection');
 var config = require('./config.js');
 var Twit = require('twit');
 var T = new Twit(config);
@@ -16,6 +16,7 @@ var T = new Twit(config);
 var baseUrl = 'http://boingboing.net/page/1';
 
 // ### Utility Functions
+// adding to array.prototype caused issues with nlp_compromise
 var pick = function(arr) {
     return arr[Math.floor(Math.random()*arr.length)];
 };
@@ -33,6 +34,14 @@ var clean = function(text) {
     return text;
 };
 
+
+var direction = {
+    forward: 0,
+    reverse: 1
+};
+
+// for testing
+// TODO: move to external file
 var headlinesFromStatic = function() {
     var headlines = [
 	{ name: 'Music video: John Cale\'s new song for Lou Reed',
@@ -288,57 +297,61 @@ var splitterPos = function(h1,h2) {
 
 };
 
+var replacer = function(pos, vector) {
 
-// simple strategy - replace all the nouns in one sentence with the nouns from another
-// It's something.
-var posReplacement = function(h1, h2, pos) {
+    var posReplacement = function(h1, h2) {
 
-    // console.log('posReplacement');
+	// console.log('posReplacement');
 
-    var sent = h1;
+	var sent = h1;
 
-    var words1 = getPOSarray(h1, pos);
-    var words2 = getPOSarray(h2, pos);
+	var words1 = getPOSarray(h1, pos);
+	var words2 = getPOSarray(h2, pos);
 
-    var longest = ( words1.length > words2.length ? words1.length : words2.length);
+	var longest = ( words1.length > words2.length ? words1.length : words2.length);
 
-    // the shortest list needs to be modded against its length
-    for (var i = 0; i < longest; i++) {
-	// console.log('replace: ' + words1[i % words1.length] + ' with: ' +  words2[i % words2.length]);
-	sent = sent.replace(new RegExp('\\b' + words1[i % words1.length] + '\\b', 'i'), words2[i % words2.length]);
-    }
+	// the shortest list needs to be modded against its length
+	for (var i = 0; i < longest; i++) {
+	    // console.log('replace: ' + words1[i % words1.length] + ' with: ' +  words2[i % words2.length]);
+	    sent = sent.replace(new RegExp('\\b' + words1[i % words1.length] + '\\b', 'i'), words2[i % words2.length]);
+	}
 
-    return sent;
+	return sent;
+
+    };
+
+    // loop through the second (smaller) array in reverse.
+    // uh. wheeee?
+    var replacementPos = function(h1, h2) {
+
+	// console.log('replacementPos');
+
+	var sent = h1;
+
+	var words1 = getPOSarray(h1, pos);
+	var words2 = getPOSarray(h2, pos);
+
+	var longest = ( words1.length > words2.length ? words1.length : words2.length);
+
+	// ugh ugh ugh ugh ugh
+	var w2i = words2.length;
+	// the shortest list needs to be modded against its length
+	for (var i = 0; i < longest; i++) {
+	    w2i--;
+	    if (w2i < 0) w2i = words2.length - 1;
+	    var invert = w2i;
+	    // console.log('i: ' + i + ' invert: ' + invert);
+	    sent = sent.replace(new RegExp('\\b' + words1[i % words1.length] + '\\b', 'i'), words2[invert]);
+	}
+
+	return sent;
+
+    };
+
+    return (vector == direction.forward ? posReplacement : replacementPos);
 
 };
 
-// loop through the second (smaller) array in reverse.
-// uh. wheeee?
-var replacementPos = function(h1, h2, pos) {
-
-    // console.log('replacementPos');
-
-    var sent = h1;
-
-    var words1 = getPOSarray(h1, pos);
-    var words2 = getPOSarray(h2, pos);
-
-    var longest = ( words1.length > words2.length ? words1.length : words2.length);
-
-    // ugh ugh ugh ugh ugh
-    var w2i = words2.length;
-    // the shortest list needs to be modded against its length
-    for (var i = 0; i < longest; i++) {
-	w2i--;
-	if (w2i < 0) w2i = words2.length - 1;
-	var invert = w2i;
-	// console.log('i: ' + i + ' invert: ' + invert);
-	sent = sent.replace(new RegExp('\\b' + words1[i % words1.length] + '\\b', 'i'), words2[invert]);
-    }
-
-    return sent;
-
-};
 
 var hasCCs = function(h1, h2) {
 
@@ -399,18 +412,13 @@ var getStrategy = function(h1, h2) {
     }
 
     if (!strategy) {
-	strategy = (Math.random() > 0.5) ? posReplacement : replacementPos;
+	strategy = (Math.random() > 0.5) ? replacer('NN', direction.forward) : replacer('NN', direction.reverse);
     }
 
     return strategy;
-
 };
 
 
-// This won't work for BoingBoing, since there are no "Categories" where the category is in the headline
-// hrm.
-// just chop the two headlines into pieces?
-// this will be... stupid.
 function tweet() {
 
     getHeadlines().then(function(headlines) {
@@ -425,8 +433,10 @@ function tweet() {
 	var strategy = getStrategy(h1.name, h2.name);;
 
 	try {
-	    // NOPE: this is a step in the right direction, but not the right step
 	    var newSentence = strategy(h1.name, h2.name);
+	    // capitalize first word
+	    // I tried inflection's "titleize" but that zapped acronyms like "SSN" and "NSA"
+	    newSentence = newSentence.slice(0,1).toUpperCase() + newSentence.slice(1);
 	    console.log(newSentence);
 	    if(!newSentence) {
 		console.log('NOTHING NOTHING NOTHING');
@@ -449,12 +459,6 @@ function tweet() {
     });
 }
 
-var getHeadlines = headlinesFromPage1;
-// var getHeadlines = headlinesFromStatic; // a static method for testing
-
-// Tweets once on initialization.
-tweet();
-
 // Tweets every 15 minutes.
 setInterval(function () {
     try {
@@ -463,4 +467,11 @@ setInterval(function () {
     catch (e) {
 	console.log(e);
     }
-}, 1000 * 60 * 60);
+}, 1000 * config.minutes * config.seconds);
+
+
+var getHeadlines = headlinesFromPage1;
+// var getHeadlines = headlinesFromStatic; // a static method for testing
+
+// Tweets once on initialization.
+tweet();
