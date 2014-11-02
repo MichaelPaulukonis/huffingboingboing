@@ -7,7 +7,8 @@
 // and `twit` as our Twitter API library.
 var request = require('request');
 var cheerio = require('cheerio');
-var _ = require('underscore.deferred');
+var _ = require('underscore');
+_.mixin(require('underscore.deferred'));
 var dfd = new _.Deferred();
 var nlp = require('nlp_compromise');
 var config = require('./config.js');
@@ -18,6 +19,12 @@ var shorturl = require('shorturl');
 var baseUrl = 'http://boingboing.net/page/1';
 
 // ### Utility Functions
+
+var logger = function(msg) {
+    // console.log('logging?: ' + config.log);
+    if (config.log) console.log(msg);
+};
+
 // adding to array.prototype caused issues with nlp_compromise
 var pick = function(arr) {
     return arr[Math.floor(Math.random()*arr.length)];
@@ -120,31 +127,31 @@ var headlinesFromStatic = function() {
 
 // ### Screen Scraping
 var headlinesFromPage1 = function() {
-    // console.log('inside of getHeadlines()');
+    // logger('inside of getHeadlines()');
     var headlines = [];
     var dfd = new _.Deferred();
     request(baseUrl, function (error, response, body) {
-	// console.log('inside of request');
+	// logger('inside of request');
 	if (!error && response.statusCode === 200) {
 	    var $ = cheerio.load(body);
 	    var heads = $('h1>a');
-	    // console.log('head count: ' + heads.length);
+	    // logger('head count: ' + heads.length);
 
 	    $('h1>a').each(function() {
 		var title = $(this).text();
-		// console.log(this);
-		// console.log(title);
+		// logger(this);
+		// logger(title);
 		var hl = {};
 		// hl.name = this.text();
 		hl.name = clean(title);
 		hl.url = baseUrl + this.attr('href');
 		headlines.push(hl);
 	    });
-	    // console.log(headlines);
+	    // logger(headlines);
 	    dfd.resolve(headlines);
 	}
 	else {
-	    // console.log('getHeadlines.else');
+	    // logger('getHeadlines.else');
 	    dfd.reject();
 	}
     });
@@ -156,18 +163,18 @@ var headlinesFromPage1 = function() {
 // headline as string
 var dumpInfo = function(headline) {
 
-    console.log('\n\nheadline: ' + headline);
+    logger('\n\nheadline: ' + headline);
 
     var p = nlp.pos(headline);
     var tokens = p[0].tokens;
 
     for (var i = 0; i < tokens.length; i++) {
         var t = tokens[i];
-        console.log('text: ' + t.text + ' (' + t.pos.tag + ')');
+        logger('text: ' + t.text + ' (' + t.pos.tag + ')');
     }
 
     var nn = getNNarray(headline);
-    console.log(nn.join(' -  '));
+    logger(nn.join(' -  '));
 };
 
 var stripWord = function(word) {
@@ -223,13 +230,6 @@ var getPOSarray = function(headline, pos) {
 };
 
 
-// this is SOMETIMES FAILING
-// WHEN THE FOLLOWING COMBO OCCURS (as well as )
-// h1: Why we love man versus nature struggles
-// h2:Who is Gamergate? Analysis of 316K tweets
-//
-// NB: no error when the sentences are in the REVERSE ORDER
-// so... something is left dangling ????
 var getPOSarrayFull = function(headline) {
 
     var parts = [];
@@ -243,7 +243,7 @@ var getPOSarrayFull = function(headline) {
 	    parts.push({ word: stripWord(t.text), pos: t.pos.tag });
 	}
     } catch (err) {
-	console.log(err.message);
+	logger(err.message);
     }
 
     return parts;
@@ -280,7 +280,7 @@ var splitterPunct = function(h1, h2) {
 
 var splitterPos = function(h1,h2) {
 
-    // console.log('splitterPos');
+    // logger('splitterPos');
 
     var pos = 'CC';
 
@@ -308,7 +308,7 @@ var replacer = function(pos, vector) {
 
     var posReplacement = function(h1, h2) {
 
-	// console.log('posReplacement');
+	// logger('posReplacement');
 
 	var sent = h1;
 
@@ -319,7 +319,7 @@ var replacer = function(pos, vector) {
 
 	// the shortest list needs to be modded against its length
 	for (var i = 0; i < longest; i++) {
-	    // console.log('replace: ' + words1[i % words1.length] + ' with: ' +  words2[i % words2.length]);
+	    // logger('replace: ' + words1[i % words1.length] + ' with: ' +  words2[i % words2.length]);
 	    sent = sent.replace(new RegExp('\\b' + words1[i % words1.length] + '\\b', 'i'), words2[i % words2.length]);
 	}
 
@@ -331,7 +331,7 @@ var replacer = function(pos, vector) {
     // uh. wheeee?
     var replacementPos = function(h1, h2) {
 
-	// console.log('replacementPos');
+	// logger('replacementPos');
 
 	var sent = h1;
 
@@ -347,7 +347,7 @@ var replacer = function(pos, vector) {
 	    w2i--;
 	    if (w2i < 0) w2i = words2.length - 1;
 	    var invert = w2i;
-	    // console.log('i: ' + i + ' invert: ' + invert);
+	    // logger('i: ' + i + ' invert: ' + invert);
 	    sent = sent.replace(new RegExp('\\b' + words1[i % words1.length] + '\\b', 'i'), words2[invert]);
 	}
 
@@ -427,28 +427,25 @@ var getStrategy = function(h1, h2) {
 
 var picker = function(headlines) {
 
-    console.log('picker!');
-
+    logger('picker!');
 
     var h1 = pickRemove(headlines);
     var h2 = pickRemove(headlines);
 
-    console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
+    logger('\nh1: ' + h1.name + '\nh2:' + h2.name);
 
     var two = [h1, h2];
 
-    console.log(two);
-
-    return  dfd.resolve(two);
+    return two;
 
 };
 
 // we do NOT have the data here... :-(
 var tweeter = function(headlines) {
 
-    console.log('tweeter!');
-    console.log(arguments);
-    // console.log(headlines);
+    logger('tweeter!');
+    logger(arguments);
+    // logger(headlines);
 
     // not random at the mo
     // because passing in original array WTF?!?!?
@@ -458,7 +455,7 @@ var tweeter = function(headlines) {
     // var h1 = pickRemove(headlines);
     // var h2 = pickRemove(headlines);
 
-    console.log('\nh1: ' + h1.name + '\nh2:' + h2.name);
+    logger('\nh1: ' + h1.name + '\nh2:' + h2.name);
 
     var strategy = getStrategy(h1.name, h2.name);;
 
@@ -467,38 +464,43 @@ var tweeter = function(headlines) {
 	// capitalize first word
 	// I tried inflection's "titleize" but that zapped acronyms like "SSN" and "NSA"
 	newSentence = newSentence.slice(0,1).toUpperCase() + newSentence.slice(1);
-	console.log(newSentence);
+	logger(newSentence);
 	if(!newSentence) {
-	    console.log('NOTHING NOTHING NOTHING');
+	    logger('NOTHING NOTHING NOTHING');
 	}
     } catch (err) {
-	console.log('Error: ' + err.message);
+	logger('Error: ' + err.message);
     }
 
     if (config.tweet_on) {
 	T.post('statuses/update', { status: newSentence }, function(err, reply) {
 	    if (err) {
-		console.log('error:', err);
+		logger('error:', err);
 	    }
 	    else {
-		//console.log('reply:', reply);
+		//logger('reply:', reply);
 	    }
 	});
     }
 
 };
 
-// we have the data HERE
-var shortenit = function(hs) {
+// headline: { name, url }
+var shortenit = function(headline) {
 
-    console.log('shortenit!');
-
-    console.log(hs);
-
+    var dfd = new _.Deferred();
+    logger('shortenit!');
+    logger(headline);
     // plan on using https://www.npmjs.org/package/shorturl
+    var newUrl = shorturl(headline.url, function(result) {
+        logger('returned from shorturl');
+        logger(result);
+        headline.url = result;
+        dfd.resolve(headline);
+    });
 
-    return dfd.resolve(hs).promise();
 
+    return dfd.promise();
 
 };
 
@@ -508,16 +510,24 @@ function tweet() {
     // http://blog.mediumequalsmessage.com/promise-deferred-objects-in-javascript-pt2-practical-use
     // http://stackoverflow.com/questions/17216438/chain-multiple-then-in-jquery-when
 
+    logger('in tweet');
 
-    dfd = new _.Deferred();
-    // getHeadlines().then(function(headlines) { tweeter(headlines); });
-    // TODO: actually pick TWO headlines first,
-    // then shorten each
     getHeadlines()
-	.then(function(hs1) { return picker(hs1); })
-	.then(function(hs2) { return shortenit(hs2); })
-    // WTF? the ENTIRE array is passed in at the end. I DO NOT UNDERSTAND
-	.then(function(h3) { tweeter(h3); });
+	.then(function(hs1) {
+            logger('headlines obtained');
+            var twoheads = picker(hs1);
+            logger('two headlines picked:');
+            logger(twoheads);
+            _.when(
+                shortenit(twoheads[0]),
+                shortenit(twoheads[1])
+            ).done(function() {
+                logger(arguments.length);
+                var res = _.flatten(arguments);
+                logger('DONE DONE DONE!');
+                logger(arguments);
+            });
+        });
 
 };
 

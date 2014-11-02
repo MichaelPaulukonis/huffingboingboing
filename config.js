@@ -11,6 +11,7 @@ module.exports = {
 
     static_lib:           (process.env.STATIC_LIB.toLowerCase() === 'true'),
     tweet_on:             (process.env.TWEET_ON.toLowerCase() === 'true'),
+    log:                  (process.env.LOG.toLowerCase() === 'true'),
     seconds:              parseInt(process.env.SECONDS, 10),
     minutes:              parseInt(process.env.MINUTES, 10)
 };
