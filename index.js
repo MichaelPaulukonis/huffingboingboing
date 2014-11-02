@@ -452,9 +452,6 @@ var tweeter = function(headlines) {
     var h1 = headlines[0];
     var h2 = headlines[1];
 
-    // var h1 = pickRemove(headlines);
-    // var h2 = pickRemove(headlines);
-
     logger('\nh1: ' + h1.name + '\nh2:' + h2.name);
 
     var strategy = getStrategy(h1.name, h2.name);;
@@ -464,21 +461,25 @@ var tweeter = function(headlines) {
 	// capitalize first word
 	// I tried inflection's "titleize" but that zapped acronyms like "SSN" and "NSA"
 	newSentence = newSentence.slice(0,1).toUpperCase() + newSentence.slice(1);
+
+        if (newSentence.length < 120) newSentence += ' ' + headlines[0].url;
+        if (newSentence.length < 120) newSentence += ' ' + headlines[1].url;
 	logger(newSentence);
+
 	if(!newSentence) {
 	    logger('NOTHING NOTHING NOTHING');
 	}
     } catch (err) {
-	logger('Error: ' + err.message);
+	console.log('Error: ' + err.message);
     }
 
     if (config.tweet_on) {
 	T.post('statuses/update', { status: newSentence }, function(err, reply) {
 	    if (err) {
-		logger('error:', err);
+		console.log('error:', err);
 	    }
 	    else {
-		//logger('reply:', reply);
+                // nothing on success
 	    }
 	});
     }
@@ -517,15 +518,16 @@ function tweet() {
             logger('headlines obtained');
             var twoheads = picker(hs1);
             logger('two headlines picked:');
-            logger(twoheads);
+            // logger(twoheads);
             _.when(
                 shortenit(twoheads[0]),
                 shortenit(twoheads[1])
             ).done(function() {
-                logger(arguments.length);
+                // logger(arguments.length);
                 var res = _.flatten(arguments);
                 logger('DONE DONE DONE!');
-                logger(arguments);
+                // logger(arguments);
+                tweeter(arguments);
             });
         });
 
