@@ -28,7 +28,7 @@
     "shorturl": "~0.0.3",
     "iconv-lite": "~0.4.4",
     "charset": "~1.0.0",
-    "jchardet": "~1.1.0"
+    "jschardet": "~1.1.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
