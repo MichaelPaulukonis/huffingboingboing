@@ -25,7 +25,10 @@
     "underscore.deferred": "~0.4.0",
     "nlp_compromise": "~0.1.4",
     "underscore": "~1.5.2",
-    "shorturl": "~0.0.3"
+    "shorturl": "~0.0.3",
+    "iconv-lite", "~0.4.4",
+    "charset", "~1.0.0",
+    "jchardet", "~1.1.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
