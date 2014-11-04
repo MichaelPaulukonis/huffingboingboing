@@ -49,81 +49,6 @@ var direction = {
     reverse: 1
 };
 
-// for testing
-// TODO: move to external file
-var headlinesFromStatic = function() {
-    var headlines = [
-	// { name: 'Ministry\'s "(Everyday Is) Halloween"',
-	//   url: '' },
-	// { name: 'The most terrifying non-horror movies',
-	//   url: '' },
-	{ name: 'Music video: John Cale\'s new song for Lou Reed',
-	  url: 'http://boingboing.net/2014/10/28/music-video-john-cales-new.html' },
-	{ name: 'Who is Gamergate? Analysis of 316K tweets',
-	  url: 'http://boingboing.net/2014/10/28/who-is-gamergate-analysis-of.html' },
-	{ name: 'Thousands of Americans got sub-broadband ISP service, thanks to telcoms shenanigans',
-	  url: 'http://boingboing.net/2014/10/28/thousands-of-americans-got-sub.html' },
-	{ name: 'Ridley Scott to produce miniseries on rocket scientist, occultist Jack Parsons',
-	  url: 'http://boingboing.net/2014/10/28/ridley-scott-to-produce-minise.html' },
-	{ name: 'Krs-One was a Teenage Drug Courier',
-	  url: 'http://boingboing.net/2014/10/28/krs-one-was-a-teenage-drug-cou.html' },
-	{ name: 'Circling the globe with the mid-20th century\'s most brilliant matchbox art',
-	  url: 'http://boingboing.net/2014/10/28/circling-the-globe-with-the-mi.html' },
-	{ name: 'Video: Dock Ellis who pitched a no-hitter while on LSD',
-	  url: 'http://boingboing.net/2014/10/28/video-dock-ellis-who-pitched.html' },
-	{ name: 'The story of Venice\'s "gentleman thief" and an amazing art heist',
-	  url: 'http://boingboing.net/2014/10/28/the-story-of-venices-gentl.html' },
-	{ name: 'Putting your foot in your mouth',
-	  url: 'http://boingboing.net/2014/10/28/putting-your-foot-in-your-mout.html' },
-	{ name: 'Furniture from old Apple G5 towers',
-	  url: 'http://boingboing.net/2014/10/28/furniture-from-old-apple-g5-to.html' },
-	{ name: 'Why we love man versus nature struggles',
-	  url: 'http://boingboing.net/2014/10/28/themartian.html' },
-	{ name: 'The Peripheral: William Gibson vs William Gibson',
-	  url: 'http://boingboing.net/2014/10/28/the-peripheral-william-gibson.html' },
-	{ name: 'Our Magic, a documentary about magic by magicians',
-	  url: 'http://boingboing.net/2014/10/28/our-magic-a-documentary-about.html' },
-	{ name: 'Oh joy! Oh Joy Sex Toy is a book!',
-	  url: 'http://boingboing.net/2014/10/27/oh-joy-oh-joy-sex-toy-is-a-bo.html' },
-	{ name: 'Suitsy: The business suit onesie',
-	  url: 'http://boingboing.net/2014/10/27/suitsy-the-business-suit-ones.html' },
-	{ name: 'The rise and fall of American Hallowe\'en costumes',
-	  url: 'http://boingboing.net/2014/10/29/the-rise-and-fall-of-american.html' },
-	{ name: 'Eight year old\'s incredible prize-winning scorpion photo',
-	  url: 'http://boingboing.net/2014/10/29/eight-year-olds-incredible-p.html' },
-	{ name: 'Verizon\'s new big budget tech-news site prohibits reporting on NSA spying or net neutrality',
-	  url: 'http://boingboing.net/2014/10/29/verizons-new-big-budget-tech.html' },
-	{ name: 'J. Mascis covers Mazzy Star',
-	  url: 'http://boingboing.net/2014/10/29/j-mascis-covers-mazzy-star.html' },
-	{ name: 'Painting with fire',
-	  url: 'http://boingboing.net/2014/10/29/painting-with-fire.html' },
-	{ name: 'Star Wars Costumes: The Original Trilogy',
-	  url: 'http://boingboing.net/2014/10/29/star-wars-costumes-the-origin.html' },
-	{ name: 'TOM THE DANCING BUG: Ernest Hemingway\'s New Typewriter',
-	  url: 'http://boingboing.net/2014/10/29/tom-the-dancing-bug-ernest-he.html' },
-	{ name: 'Pope: God "is not a magician" and Big Bang and evolution are A-ok',
-	  url: 'http://boingboing.net/2014/10/29/pope-god-is-not-a-magician.html' },
-	{ name: 'Why Are Witches Green?',
-	  url: 'http://boingboing.net/2014/10/29/why-are-witches-green.html' },
-	{ name: 'Obamacare: what it is, what it\'s not',
-	  url: 'http://boingboing.net/2014/10/29/obamacare-what-it-is-what-it.html' },
-	{ name: 'Hallowe\'en Makie mischief: Barbie freakout!',
-	  url: 'http://boingboing.net/2014/10/28/halloween-makie-mischief-ba.html' },
-	{ name: 'Every artist\'s "how I made it" talk, ever',
-	  url: 'http://boingboing.net/2014/10/28/every-artists-how-i-made-i.html' },
-	{ name: 'The Terrible Sea Lion: a social media parable',
-	  url: 'http://boingboing.net/2014/10/28/the-terrible-sea-lion-a-socia.html' },
-	{ name: 'Which online services will stick up for you when the copyright bullies knock?',
-	  url: 'http://boingboing.net/2014/10/28/which-online-services-will-sti.html' },
-	{ name: 'Political mailer includes opponent\'s SSN and driver\'s license number',
-	  url: 'http://boingboing.net/2014/10/28/political-mailer-includes-oppo.html' }
-    ];
-
-    // var dfd = new _.Deferred().resolve(headlines);
-    dfd.resolve(headlines);
-    // The function returns a promise, and the promise resolves to the array of headlines.
-    return dfd.promise();
-};
 
 // ### Screen Scraping
 var headlinesFromPage1 = function() {
@@ -304,6 +229,24 @@ var splitterPos = function(h1,h2) {
 
 };
 
+
+var woodSplitter = function(h1, h2) {
+
+    var t1 = nlp.tokenize(h1)[0].tokens;
+    var t2 = nlp.tokenize(h2)[0].tokens;
+
+    var pos1 = t1[Math.floor(Math.random()*t1.length)].text;
+    var pos2 = t2[Math.floor(Math.random()*t2.length)].text;
+
+    var w1 = h1.search(new RegExp('\\b' + pos1 + '\\b'));
+    var w2 = h2.search(new RegExp('\\b' + pos2 + '\\b'));
+
+    var sent = h1.slice(0, w1).trim() + ' '  + h2.slice(w2).trim();
+
+    return sent;
+
+};
+
 var replacer = function(pos, vector) {
 
     var posReplacement = function(h1, h2) {
@@ -360,20 +303,20 @@ var replacer = function(pos, vector) {
 };
 
 
-var hasCCs = function(h1, h2) {
+var hasPOS = function(h1, h2, pos) {
 
     var h1f = false;
     var h2f = false;
 
     for (var i = 0; i < h1.length; i++) {
-	if (h1[i].pos == 'CC') {
+	if (h1[i].pos == pos) {
 	    h1f = true;
 	    break;
 	}
     }
 
     for (i = 0; i < h2.length; i++) {
-	if (h2[i].pos == 'CC') {
+	if (h2[i].pos == pos) {
 	    h2f = true;
 	    break;
 	}
@@ -381,9 +324,12 @@ var hasCCs = function(h1, h2) {
 
     var found = h1f && h2f;
 
+    if (pos == 'NN') console.log('found: ' + found);
+
     return found;
 
 };
+
 
 var hasColons = function(h1, h2) {
 
@@ -406,8 +352,9 @@ var getStrategy = function(h1, h2) {
 
     var hp1 = getPOSarrayFull(h1);
     var hp2 = getPOSarrayFull(h2);
-    var ccs = hasCCs(hp1,hp2);
+    var ccs = hasPOS(hp1,hp2, 'CC');
     var colons = hasColons(h1, h2);
+    var nns = hasPOS(hp1, hp2, 'NN');
 
     var strategy;
 
@@ -416,10 +363,10 @@ var getStrategy = function(h1, h2) {
     }
     else if(ccs && coinflip(0.75)) {
 	strategy = splitterPos;
-    }
-
-    if (!strategy) {
+    } else if (nns && coinflip(0.8)) {
 	strategy = (Math.random() > 0.5) ? replacer('NN', direction.forward) : replacer('NN', direction.reverse);
+    } else {
+        strategy = woodSplitter;
     }
 
     return strategy;
@@ -542,7 +489,7 @@ setInterval(function () {
 
 
 // hard-coded headlines, or OMG ITS ALIVE
-var getHeadlines = (config.static_lib ? headlinesFromStatic : headlinesFromPage1);
+var getHeadlines = (config.static_lib ? require('./static.js').getHeadlines : headlinesFromPage1);
 
 // Tweets once on initialization.
 tweet();
