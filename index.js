@@ -16,7 +16,7 @@ var Twit = require('twit');
 var T = new Twit(config);
 var shorturl = require('shorturl');
 
-var baseUrl = 'http://boingboing.net/page/1';
+var baseUrl = 'http://boingboing.net/page/';
 
 // ### Utility Functions
 
@@ -35,6 +35,11 @@ var pickRemove = function(arr) {
     return arr.splice(index,1)[0];
 };
 
+
+var getRandom = function(min,max) {
+    return Math.floor(Math.random() * (max - min) + min);
+};
+
 // crude fix for the encoding problems I've encountered
 // not sure what the best way to do this is. :-(
 var clean = function(text) {
@@ -49,41 +54,50 @@ var direction = {
     reverse: 1
 };
 
-
 // ### Screen Scraping
-var headlinesFromPage1 = function() {
+var headlinesFromPage = function(pageNbr) {
     // logger('inside of getHeadlines()');
-    var headlines = [];
     var dfd = new _.Deferred();
-    request(baseUrl, function (error, response, body) {
-	// logger('inside of request');
-	if (!error && response.statusCode === 200) {
-	    var $ = cheerio.load(body);
-	    var heads = $('h1>a');
-	    // logger('head count: ' + heads.length);
+    var url = baseUrl + pageNbr;
+    console.log('getting from ' + url);
+    try {
+	request(url, function (error, response, body) {
+	    // logger('inside of request');
+	    if (!error && response.statusCode === 200) {
+		var headlines = [];
 
-	    $('h1>a').each(function() {
-		var title = $(this).text();
-		// logger(this);
-		// logger(title);
-		var hl = {};
-		// hl.name = this.text();
-		hl.name = clean(title);
-		hl.url = this.attr('href');
-		headlines.push(hl);
-	    });
-	    // logger(headlines);
-	    dfd.resolve(headlines);
-	}
-	else {
-	    // logger('getHeadlines.else');
-	    dfd.reject();
-	}
-    });
+		var $ = cheerio.load(body);
+		var heads = $('h1>a');
+		// is there sometimes an encoding issue?
+		// but I can't replicate on the node console....
+
+		logger('head count: ' + heads.length);
+
+		$('h1>a').each(function() {
+		    var title = $(this).text();
+		    var hl = {};
+		    hl.name = clean(title);
+		    hl.url = this.attr('href');
+		    headlines.push(hl);
+		});
+		if (headlines.length == 0) {
+		    console.log('NO HEADLINES FOUND FOR ' + url);
+		    console.log(body);
+		}
+		dfd.resolve(headlines);
+	    }
+	    else {
+		logger('getHeadlines.else');
+		dfd.reject();
+	    }
+	});
+    } catch (err) {
+	console.log('ERROR ERROR ERROR');
+	console.log(err.message);
+    }
     // The function returns a promise, and the promise resolves to the array of headlines.
     return dfd.promise();
 };
-
 
 // headline as string
 var dumpInfo = function(headline) {
@@ -118,9 +132,6 @@ var stripWord = function(word) {
 
     return word;
 };
-
-
-
 
 var getNNarray = function(headline) {
 
@@ -460,19 +471,41 @@ function tweet() {
 
     logger('in tweet');
 
-    getHeadlines()
-	.then(function(hs1) {
-            var twoheads = picker(hs1);
-            logger('two headlines picked:');
-            _.when(
-                shortenit(twoheads[0]),
-                shortenit(twoheads[1])
-            ).done(function() {
-                var res = _.flatten(arguments);
-                logger('DONE DONE DONE!');
-                tweeter(arguments);
-            });
+    var chance = Math.random();
+    var firstSet = 6257;
+    var secondSet = 2;
+    var lastPage = 6900; // prolly a config var, so we could update more easily
+    if (chance > 0.75) {
+	secondSet = 2;
+    } else if (chance > 0.5) {
+	secondSet = getRandom(2,30);
+    } else if (chance > 0.25) {
+	secondSet = getRandom(31,lastPage);
+    } else if (chance > 0.1) {
+	secondSet = getRandom(3000,lastPage);
+    } else {
+	firstSet = getRandom(2,lastPage);
+	secondSet = getRandom(3,lastPage);
+    }
+
+    _.when(
+	getHeadlines(firstSet),
+	getHeadlines(secondSet)
+    ) .then(function() {
+	var heads = _.flatten(arguments);
+	logger(heads);
+	var hs1 = heads;
+        var twoheads = picker(hs1);
+        logger('two headlines picked:');
+        _.when(
+            shortenit(twoheads[0]),
+            shortenit(twoheads[1])
+        ).done(function() {
+            var res = _.flatten(arguments);
+            logger('DONE DONE DONE!');
+            tweeter(arguments);
         });
+    });
 
 };
 
@@ -489,7 +522,7 @@ setInterval(function () {
 
 
 // hard-coded headlines, or OMG ITS ALIVE
-var getHeadlines = (config.static_lib ? require('./static.js').getHeadlines : headlinesFromPage1);
+var getHeadlines = (config.static_lib ? require('./static.js').getHeadlines : headlinesFromPage);
 
 // Tweets once on initialization.
 tweet();
