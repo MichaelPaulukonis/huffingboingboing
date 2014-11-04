@@ -144,7 +144,7 @@ var headlinesFromPage1 = function() {
 		var hl = {};
 		// hl.name = this.text();
 		hl.name = clean(title);
-		hl.url = baseUrl + this.attr('href');
+		hl.url = this.attr('href');
 		headlines.push(hl);
 	    });
 	    // logger(headlines);
@@ -515,25 +515,22 @@ function tweet() {
 
     getHeadlines()
 	.then(function(hs1) {
-            logger('headlines obtained');
             var twoheads = picker(hs1);
             logger('two headlines picked:');
-            // logger(twoheads);
             _.when(
                 shortenit(twoheads[0]),
                 shortenit(twoheads[1])
             ).done(function() {
-                // logger(arguments.length);
                 var res = _.flatten(arguments);
                 logger('DONE DONE DONE!');
-                // logger(arguments);
                 tweeter(arguments);
             });
         });
 
 };
 
-// Tweets every 15 minutes.
+// Tweets ever n minutes
+// set config.seconds to 60 for a complete minute
 setInterval(function () {
     try {
 	tweet();
