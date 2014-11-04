@@ -15,6 +15,10 @@ var config = require('./config.js');
 var Twit = require('twit');
 var T = new Twit(config);
 var shorturl = require('shorturl');
+var iconv = require('iconv-lite');
+var Buffer = require('buffer').Buffer;
+var charset = require('charset');
+var jschardet = require('jschardet');
 
 var baseUrl = 'http://boingboing.net/page/';
 
@@ -61,16 +65,31 @@ var headlinesFromPage = function(pageNbr) {
     var url = baseUrl + pageNbr;
     console.log('getting from ' + url);
     try {
-	request(url, function (error, response, body) {
-	    // logger('inside of request');
+	// request({ url: url, encoding: null }, function (error, response, b) {
+	request(url, function (error, response, b) {
+
+	    if (error) { console.log('error: ' + error); }
+	    if (response.statusCode !== 200) { console.log(response); };
+
 	    if (!error && response.statusCode === 200) {
 		var headlines = [];
 
+		// there were... encoding issues?
+		// forcing this encoding seems to work
+		// even though it is the DECLARED encoding
+		// http://stackoverflow.com/questions/12326688/node-js-scrape-encoding
+		// http://stackoverflow.com/questions/23805566/weird-characters-when-using-console-print-cheerio-nodejs
+		var body; // = iconv.decode(b, 'utf-8');
+
+		var enc = charset(response.headers, b);
+		enc = enc || jchardet.detect(b).encoding.toLowerCase();
+		if (enc != 'utf-8') {
+		    logger('NOT UTF-8: ' + enc);
+		    body = iconv.decode(new Buffer(b, 'binary'), 'utf-8');
+		}
+
 		var $ = cheerio.load(body);
 		var heads = $('h1>a');
-		// is there sometimes an encoding issue?
-		// but I can't replicate on the node console....
-
 		logger('head count: ' + heads.length);
 
 		$('h1>a').each(function() {
@@ -81,13 +100,13 @@ var headlinesFromPage = function(pageNbr) {
 		    headlines.push(hl);
 		});
 		if (headlines.length == 0) {
-		    console.log('NO HEADLINES FOUND FOR ' + url);
-		    console.log(body);
+		    logger('NO HEADLINES FOUND FOR ' + url);
+		    // logger(b);
 		}
 		dfd.resolve(headlines);
 	    }
 	    else {
-		logger('getHeadlines.else');
+		logger('headlinesFromPage.else');
 		dfd.reject();
 	    }
 	});
@@ -493,7 +512,7 @@ function tweet() {
 	getHeadlines(secondSet)
     ) .then(function() {
 	var heads = _.flatten(arguments);
-	logger(heads);
+	// logger(heads);
 	var hs1 = heads;
         var twoheads = picker(hs1);
         logger('two headlines picked:');
