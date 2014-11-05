@@ -63,7 +63,7 @@ var headlinesFromPage = function(pageNbr) {
     // logger('inside of getHeadlines()');
     var dfd = new _.Deferred();
     var url = baseUrl + pageNbr;
-    console.log('getting from ' + url);
+    logger('getting from ' + url);
     try {
 	// request({ url: url, encoding: null }, function (error, response, b) {
 	request(url, function (error, response, b) {
@@ -450,15 +450,19 @@ var tweeter = function(headlines) {
 	console.log('Error: ' + err.message);
     }
 
-    if (config.tweet_on) {
-	T.post('statuses/update', { status: newSentence }, function(err, reply) {
-	    if (err) {
-		console.log('error:', err);
-	    }
-	    else {
-                // nothing on success
-	    }
-	});
+    if (newSentence.length === 0) {
+        tweet();
+    } else {
+        if (config.tweet_on) {
+	    T.post('statuses/update', { status: newSentence }, function(err, reply) {
+	        if (err) {
+		    console.log('error:', err);
+	        }
+	        else {
+                    // nothing on success
+	        }
+	    });
+        }
     }
 
 };
