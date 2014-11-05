@@ -450,7 +450,7 @@ var tweeter = function(headlines) {
 	console.log('Error: ' + err.message);
     }
 
-    if (newSentence.length === 0) {
+    if (newSentence.length === 0 || newSentence.length > 140) {
         tweet();
     } else {
         if (config.tweet_on) {
