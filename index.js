@@ -491,7 +491,7 @@ function tweet() {
     logger('in tweet');
 
     var chance = Math.random();
-    var firstSet = 6257;
+    var firstSet = 1;
     var secondSet = 2;
     var lastPage = 6900; // prolly a config var, so we could update more easily
     if (chance > 0.75) {
