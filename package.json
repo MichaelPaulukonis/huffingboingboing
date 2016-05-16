@@ -1,19 +1,19 @@
 {
-  "name": "twoheadlines",
-  "version": "0.0.1",
-  "description": "Confused about the news.",
+  "name": "HuffingBoingBoing-bot",
+  "version": "0.0.2",
+  "description": "Getting high off headlines.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:dariusk/twoheadlines.git"
+    "url": "git@github.com:michaelpaulukonis/huffingboingboing.git"
   },
-  "author": "Darius Kazemi",
+  "author": "Michael Paulukonis",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dariusk/twoheadlines/issues"
+    "url": "https://github.com/michaelpaulukonis/huffingboingboing/issues"
   },
   "engines": {
     "node": "0.10.17"
@@ -30,11 +30,5 @@
     "charset": "~1.0.0",
     "jschardet": "~1.1.0"
   },
-  "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-docco2": "~0.1.5",
-    "grunt-contrib-jshint": "~0.6.0",
-    "grunt-contrib-watch": "~0.4.0",
-    "underscore": "~1.5.2"
-  }
+  "devDependencies": { }
 }

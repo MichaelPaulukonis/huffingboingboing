@@ -437,8 +437,8 @@ var tweeter = function(headlines) {
     // I tried inflection's "titleize" but that zapped acronyms like "SSN" and "NSA"
     newSentence = newSentence.slice(0,1).toUpperCase() + newSentence.slice(1);
 
-    if (newSentence.length < 120) newSentence += ' ' + headlines[0].url;
-    if (newSentence.length < 120) newSentence += ' ' + headlines[1].url;
+    if (newSentence.length < 120 && headlines[0].url !== undefined) newSentence += ' ' + headlines[0].url;
+    if (newSentence.length < 120 && headlines[1].url !== undefined) newSentence += ' ' + headlines[1].url;
     logger(newSentence);
 
     if(!newSentence) {
