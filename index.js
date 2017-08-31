@@ -19,7 +19,7 @@ var Buffer = require('buffer').Buffer;
 var charset = require('charset');
 var jschardet = require('jschardet');
 
-var baseUrl = 'http://boingboing.net/blog/page/';
+var baseUrl = 'https://boingboing.net/blog/page/';
 
 // ### Utility Functions
 

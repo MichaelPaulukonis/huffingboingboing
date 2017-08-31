@@ -19,16 +19,16 @@
     "node": "0.10.17"
   },
   "dependencies": {
-    "request": "~2.27.0",
-    "cheerio": "~0.12.1",
-    "twit": "~1.1.9",
-    "underscore.deferred": "~0.4.0",
-    "nlp_compromise": "~0.1.4",
-    "underscore": "~1.5.2",
-    "shorturl": "git://github.com/michaelpaulukonis/node-shorturl.git",
-    "iconv-lite": "~0.4.4",
     "charset": "~1.0.0",
-    "jschardet": "~1.1.0"
+    "cheerio": "~0.12.1",
+    "iconv-lite": "~0.4.4",
+    "jschardet": "~1.1.0",
+    "nlp_compromise": "~0.1.4",
+    "request": "~2.27.0",
+    "shorturl": "git://github.com/michaelpaulukonis/node-shorturl.git",
+    "twit": "~1.1.9",
+    "underscore": "~1.5.2",
+    "underscore.deferred": "~0.4.0"
   },
-  "devDependencies": { }
+  "devDependencies": {}
 }
